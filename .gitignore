@@ -1,0 +1,26 @@
+# Dependency directories
+node_modules/
+
+# Local environment variables
+.env
+.env.*
+!.env.example
+
+# Next.js build output
+.next/
+out/
+next-env.d.ts
+
+# Vercel
+.vercel/
+
+# Logs
+*.log
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/

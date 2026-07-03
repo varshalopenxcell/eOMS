@@ -1,0 +1,64 @@
+import { createClient } from '@supabase/supabase-js';
+import { NextResponse } from 'next/server';
+import { organizationSchema } from '@/schemas/organization';
+import { getAuthedUser } from '@/lib/supabase/server';
+
+const supabaseAdmin = createClient(
+  process.env.SUPABASE_URL ?? '',
+  process.env.SUPABASE_SERVICE_ROLE_KEY ?? '',
+  {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false
+    }
+  }
+);
+
+export async function GET() {
+  const user = await getAuthedUser();
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const membershipResponse = await supabaseAdmin
+    .from('organization_memberships')
+    .select('organization_id')
+    .eq('user_id', user.id)
+    .limit(1)
+    .single();
+
+  if (membershipResponse.error || !membershipResponse.data) {
+    return NextResponse.json({ error: 'Organization membership not found' }, { status: 404 });
+  }
+
+  const organizationId = membershipResponse.data.organization_id;
+
+  const organizationResponse = await supabaseAdmin
+    .from('organizations')
+    .select('id,name,slug,currency,timezone')
+    .eq('id', organizationId)
+    .limit(1)
+    .single();
+
+  if (organizationResponse.error || !organizationResponse.data) {
+    return NextResponse.json({ error: 'Organization not found' }, { status: 404 });
+  }
+
+  const subscriptionResponse = await supabaseAdmin
+    .from('subscriptions')
+    .select('plan_id')
+    .eq('organization_id', organizationId)
+    .limit(1)
+    .single();
+
+  const plan = subscriptionResponse.data
+    ? (await supabaseAdmin.from('plans').select('name,tier').eq('id', subscriptionResponse.data.plan_id).limit(1).single()).data
+    : null;
+
+  const result = organizationSchema.parse({
+    ...organizationResponse.data,
+    plan: plan ?? undefined
+  });
+
+  return NextResponse.json(result);
+}
