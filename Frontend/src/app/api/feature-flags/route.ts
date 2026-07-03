@@ -1,12 +1,15 @@
 import { NextResponse } from 'next/server';
 import { featureFlagsSchema } from '@/schemas/featureFlags';
-import { getAuthedUser } from '@/lib/supabase/server';
+// AUTH TEMPORARILY DISABLED — re-import when re-enabling the guard below.
+// import { getAuthedUser } from '@/lib/supabase/server';
 
 export async function GET() {
-  const user = await getAuthedUser();
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  // AUTH TEMPORARILY DISABLED — 401 guard commented out so the app is
+  // accessible without a session. Re-enable to restore auth gating.
+  // const user = await getAuthedUser();
+  // if (!user) {
+  //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  // }
 
   const result = featureFlagsSchema.parse({
     featureFlags: [
