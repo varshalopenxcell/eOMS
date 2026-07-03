@@ -1,20 +1,14 @@
-import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { organizationSchema } from '@/schemas/organization';
 import { getAuthedUser } from '@/lib/supabase/server';
+import { getSupabaseAdmin } from '@/lib/supabase/admin';
 
-const supabaseAdmin = createClient(
-  process.env.SUPABASE_URL ?? '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY ?? '',
-  {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false
-    }
-  }
-);
+// Reads per-request cookies and the database; never prerender at build time.
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
+  const supabaseAdmin = getSupabaseAdmin();
+
   // AUTH TEMPORARILY DISABLED — 401 guard commented out. When there is no
   // authenticated user we fall back to the first available organization so the
   // app has data to render. Re-enable the guard + user-scoped lookup below.

@@ -1,11 +1,20 @@
 import { cookies } from 'next/headers';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
+/**
+ * Reads and validates the public Supabase config. Kept out of module scope so
+ * that importing this file has no side effects — throwing at import time breaks
+ * the Next.js build's "collect page data" step when env vars are absent.
+ */
+function getSupabaseConfig() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables.');
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error('Missing Supabase environment variables.');
+  }
+
+  return { supabaseUrl, supabaseAnonKey };
 }
 
 /**
@@ -14,6 +23,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
  * stays in sync across server and client rendering.
  */
 export function createSupabaseServerClient() {
+  const { supabaseUrl, supabaseAnonKey } = getSupabaseConfig();
   const cookieStore = cookies();
 
   return createServerClient(supabaseUrl, supabaseAnonKey, {
