@@ -20,7 +20,6 @@ import {
   Plug,
   ShieldCheck,
   CreditCard,
-  Search,
   Bell,
   ChevronRight,
   ChevronsUpDown,
@@ -32,6 +31,7 @@ import {
 } from 'lucide-react';
 import { useOrganization } from '@/hooks/useOrganization';
 import { cn } from '@/lib/utils';
+import { CommandPalette } from './CommandPalette';
 import { SignOutButton } from './SignOutButton';
 import { ThemeToggle } from './ThemeToggle';
 
@@ -257,15 +257,7 @@ export function Shell({ children, title = 'Overview', description, breadcrumbs, 
             </div>
 
             <div className="flex shrink-0 items-center gap-2.5">
-              <div className="hidden items-center gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-sm text-subtle shadow-xs transition focus-within:border-brand/50 focus-within:shadow-focus md:flex">
-                <Search className="h-4 w-4 text-faint" />
-                <input
-                  type="search"
-                  placeholder="Search anything…"
-                  className="w-32 bg-transparent text-sm text-fg outline-none placeholder:text-faint lg:w-56"
-                />
-                <kbd className="rounded-md border border-line bg-surface-2 px-1.5 py-0.5 text-[10px] font-medium text-subtle">⌘K</kbd>
-              </div>
+              <CommandPalette />
               <div className="relative">
                 <button
                   onClick={() => setNotifOpen((v) => !v)}
