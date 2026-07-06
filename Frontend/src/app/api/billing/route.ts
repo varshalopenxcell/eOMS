@@ -9,19 +9,17 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   const supabaseAdmin = getSupabaseAdmin();
 
-  // AUTH TEMPORARILY DISABLED — 401 guard commented out. When there is no
-  // authenticated user we fall back to the first available organization so the
-  // app has data to render. Re-enable the guard + user-scoped lookup below.
   const user = await getAuthedUser();
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
 
-  // if (!user) {
-  //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  // }
-
-  const membershipQuery = supabaseAdmin.from('organization_memberships').select('organization_id');
-  const membershipResponse = user
-    ? await membershipQuery.eq('user_id', user.id).limit(1).single()
-    : await membershipQuery.limit(1).single();
+  const membershipResponse = await supabaseAdmin
+    .from('organization_memberships')
+    .select('organization_id')
+    .eq('user_id', user.id)
+    .limit(1)
+    .single();
 
   if (membershipResponse.error || !membershipResponse.data) {
     return NextResponse.json({ error: 'Organization membership not found' }, { status: 404 });

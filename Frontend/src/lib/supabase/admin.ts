@@ -41,3 +41,37 @@ export function getSupabaseAdmin() {
 
   return adminClient;
 }
+
+/**
+ * Resolves which organization the current request operates on.
+ *
+ * With auth enabled, pass the authenticated user's id to scope to the org they
+ * belong to. While auth is disabled (see middleware), `userId` is undefined and
+ * we fall back to the first organization in the database so the app still has a
+ * tenant to read from and write to. Returns null when no organization exists.
+ */
+export async function resolveOrganizationId(userId?: string | null): Promise<number | null> {
+  const supabaseAdmin = getSupabaseAdmin();
+
+  if (userId) {
+    const membership = await supabaseAdmin
+      .from('organization_memberships')
+      .select('organization_id')
+      .eq('user_id', userId)
+      .limit(1)
+      .maybeSingle();
+
+    if (membership.data?.organization_id) {
+      return membership.data.organization_id as number;
+    }
+  }
+
+  const organization = await supabaseAdmin
+    .from('organizations')
+    .select('id')
+    .order('id', { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  return (organization.data?.id as number | undefined) ?? null;
+}
