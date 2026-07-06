@@ -1,4 +1,3 @@
-import { Calendar, SlidersHorizontal } from 'lucide-react';
 import { Shell } from '@/components/ui/Shell';
 import { KpiCards } from '@/components/dashboard/KpiCards';
 import { RevenueChart } from '@/components/dashboard/RevenueChart';
@@ -9,21 +8,7 @@ import {
   SalesByChannel
 } from '@/components/dashboard/BottomCharts';
 import { AlertsPanel, QuickActions, RecentOrders, TopChannels } from '@/components/dashboard/Insights';
-
-function Toolbar() {
-  return (
-    <>
-      <button className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-3.5 py-2.5 text-sm font-medium text-fg shadow-xs transition hover:border-line-strong">
-        <Calendar className="h-4 w-4 text-muted" />
-        Dec 1 - Dec 31, 2024
-      </button>
-      <button className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-3.5 py-2.5 text-sm font-medium text-fg shadow-xs transition hover:border-line-strong">
-        <SlidersHorizontal className="h-4 w-4 text-muted" />
-        Filters
-      </button>
-    </>
-  );
-}
+import { DashboardToolbar } from '@/components/dashboard/DashboardToolbar';
 
 export default function DashboardPage() {
   return (
@@ -31,7 +16,7 @@ export default function DashboardPage() {
       breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }]}
       title="Overview"
       description="Real-time snapshot of your order operations and business performance."
-      toolbar={<Toolbar />}
+      toolbar={<DashboardToolbar />}
     >
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
         {/* Primary column */}
