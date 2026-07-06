@@ -25,11 +25,41 @@ import {
   ChevronRight,
   ChevronsUpDown,
   Menu,
-  X
+  X,
+  AlertTriangle,
+  UserPlus,
+  CheckCheck
 } from 'lucide-react';
 import { useOrganization } from '@/hooks/useOrganization';
+import { cn } from '@/lib/utils';
 import { SignOutButton } from './SignOutButton';
 import { ThemeToggle } from './ThemeToggle';
+
+type NotificationTone = 'primary' | 'success' | 'warning' | 'danger' | 'info';
+
+const notificationToneChip: Record<NotificationTone, string> = {
+  primary: 'bg-brand-soft text-brand',
+  success: 'bg-success-soft text-success-fg',
+  warning: 'bg-warning-soft text-warning-fg',
+  danger: 'bg-danger-soft text-danger-fg',
+  info: 'bg-info-soft text-info-fg'
+};
+
+const initialNotifications: {
+  id: number;
+  icon: typeof Bell;
+  tone: NotificationTone;
+  title: string;
+  body: string;
+  time: string;
+  unread: boolean;
+}[] = [
+  { id: 1, icon: ShoppingCart, tone: 'primary', title: 'New order placed', body: 'Order #o13 from Ava Thompson · $412.00', time: '2m ago', unread: true },
+  { id: 2, icon: AlertTriangle, tone: 'warning', title: 'Low stock alert', body: 'Standing Desk Converter — 5 units left', time: '1h ago', unread: true },
+  { id: 3, icon: CreditCard, tone: 'success', title: 'Payment received', body: 'Invoice INV-2026-006 · $299.00', time: '3h ago', unread: true },
+  { id: 4, icon: Truck, tone: 'danger', title: 'Shipment exception', body: 'SHP-4825 delayed in Boston, MA', time: '5h ago', unread: false },
+  { id: 5, icon: UserPlus, tone: 'info', title: 'New customer', body: 'Liam Walsh joined Brewhouse Supply', time: 'Yesterday', unread: false }
+];
 
 type NavItem = { href: string; label: string; icon: typeof LayoutDashboard; badge?: string };
 
@@ -88,6 +118,13 @@ export function Shell({ children, title = 'Overview', description, breadcrumbs, 
   const { data: organization, isLoading } = useOrganization();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifications, setNotifications] = useState(initialNotifications);
+  const unreadCount = notifications.filter((n) => n.unread).length;
+
+  function markAllRead() {
+    setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
+  }
 
   const orgInitial = organization?.name?.charAt(0)?.toUpperCase() ?? 'E';
   const planLabel = organization?.plan?.name ? `${organization.plan.name} plan` : 'Enterprise Plan';
@@ -229,15 +266,80 @@ export function Shell({ children, title = 'Overview', description, breadcrumbs, 
                 />
                 <kbd className="rounded-md border border-line bg-surface-2 px-1.5 py-0.5 text-[10px] font-medium text-subtle">⌘K</kbd>
               </div>
-              <button
-                aria-label="Notifications"
-                className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-surface text-muted shadow-xs transition hover:border-line-strong hover:text-fg"
-              >
-                <Bell className="h-[18px] w-[18px]" />
-                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-bold text-white ring-2 ring-surface">
-                  2
-                </span>
-              </button>
+              <div className="relative">
+                <button
+                  onClick={() => setNotifOpen((v) => !v)}
+                  aria-label="Notifications"
+                  className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-surface text-muted shadow-xs transition hover:border-line-strong hover:text-fg"
+                >
+                  <Bell className="h-[18px] w-[18px]" />
+                  {unreadCount > 0 ? (
+                    <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-bold text-white ring-2 ring-surface">
+                      {unreadCount}
+                    </span>
+                  ) : null}
+                </button>
+                {notifOpen ? (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setNotifOpen(false)} aria-hidden />
+                    <div className="absolute right-0 top-[calc(100%+8px)] z-50 w-[22rem] max-w-[calc(100vw-2rem)] animate-scale-in overflow-hidden rounded-2xl border border-line bg-elevated shadow-lift">
+                      <div className="flex items-center justify-between border-b border-line px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-semibold text-fg">Notifications</p>
+                          {unreadCount > 0 ? (
+                            <span className="rounded-full bg-brand-soft px-1.5 py-0.5 text-[10px] font-semibold text-brand-fg">
+                              {unreadCount} new
+                            </span>
+                          ) : null}
+                        </div>
+                        {unreadCount > 0 ? (
+                          <button
+                            onClick={markAllRead}
+                            className="flex items-center gap-1 text-xs font-medium text-brand hover:text-brand-strong"
+                          >
+                            <CheckCheck className="h-3.5 w-3.5" />
+                            Mark all read
+                          </button>
+                        ) : null}
+                      </div>
+                      <div className="max-h-[22rem] overflow-y-auto">
+                        {notifications.map((n) => {
+                          const Icon = n.icon;
+                          return (
+                            <div
+                              key={n.id}
+                              className={cn(
+                                'flex gap-3 border-b border-line px-4 py-3 transition last:border-0 hover:bg-surface-2',
+                                n.unread && 'bg-surface-2/60'
+                              )}
+                            >
+                              <span
+                                className={cn(
+                                  'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg',
+                                  notificationToneChip[n.tone]
+                                )}
+                              >
+                                <Icon className="h-4 w-4" />
+                              </span>
+                              <div className="min-w-0 flex-1">
+                                <p className="text-sm font-medium text-fg">{n.title}</p>
+                                <p className="truncate text-xs text-muted">{n.body}</p>
+                                <p className="mt-0.5 text-[11px] text-faint">{n.time}</p>
+                              </div>
+                              {n.unread ? <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand" /> : null}
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className="border-t border-line px-4 py-2.5 text-center">
+                        <button className="text-xs font-medium text-brand hover:text-brand-strong">
+                          View all notifications
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                ) : null}
+              </div>
               <ThemeToggle />
               <div className="mx-1 hidden h-6 w-px bg-line sm:block" />
               <div className="relative">
