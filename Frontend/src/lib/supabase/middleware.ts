@@ -5,8 +5,8 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
 
 // Any route starting with one of these requires an authenticated session.
+// '/dashboard' is intentionally excluded so it's reachable without login.
 const protectedRoutes = [
-  '/dashboard',
   '/orders',
   '/customers',
   '/products',
