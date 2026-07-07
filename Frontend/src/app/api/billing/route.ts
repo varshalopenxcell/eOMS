@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { billingSchema } from '@/schemas/billing';
 import { getAuthedUser } from '@/lib/supabase/server';
-import { getSupabaseAdmin } from '@/lib/supabase/admin';
+import { getSupabaseAdmin, resolveOrganizationId } from '@/lib/supabase/admin';
 
 // Reads per-request cookies and the database; never prerender at build time.
 export const dynamic = 'force-dynamic';
@@ -10,22 +10,10 @@ export async function GET() {
   const supabaseAdmin = getSupabaseAdmin();
 
   const user = await getAuthedUser();
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const organizationId = await resolveOrganizationId(user?.id);
+  if (!organizationId) {
+    return NextResponse.json({ error: 'No organization found' }, { status: 404 });
   }
-
-  const membershipResponse = await supabaseAdmin
-    .from('organization_memberships')
-    .select('organization_id')
-    .eq('user_id', user.id)
-    .limit(1)
-    .single();
-
-  if (membershipResponse.error || !membershipResponse.data) {
-    return NextResponse.json({ error: 'Organization membership not found' }, { status: 404 });
-  }
-
-  const organizationId = membershipResponse.data.organization_id;
 
   const subscriptionResponse = await supabaseAdmin
     .from('subscriptions')

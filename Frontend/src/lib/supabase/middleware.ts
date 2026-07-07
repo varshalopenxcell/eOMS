@@ -4,25 +4,8 @@ import { NextResponse, type NextRequest } from 'next/server';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
 
-// Any route starting with one of these requires an authenticated session.
-// '/dashboard' is intentionally excluded so it's reachable without login.
-const protectedRoutes = [
-  '/orders',
-  '/customers',
-  '/products',
-  '/inventory',
-  '/warehouses',
-  '/shipping',
-  '/returns',
-  '/analytics',
-  '/reports',
-  '/workflows',
-  '/rules',
-  '/integrations',
-  '/users',
-  '/billing',
-  '/settings'
-];
+// Auth is disabled site-wide: no route requires an authenticated session.
+const protectedRoutes: string[] = [];
 
 /**
  * Refreshes the Supabase session on every request (per the official
