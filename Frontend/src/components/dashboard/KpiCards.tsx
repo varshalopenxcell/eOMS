@@ -7,7 +7,7 @@ import { kpis } from './data';
 
 export function KpiCards() {
   return (
-    <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
+    <section className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-5">
       {kpis.map((kpi, i) => {
         const Icon = kpi.icon;
         const positive = kpi.trend === 'up';
@@ -39,16 +39,16 @@ export function KpiCards() {
               <p className="mt-3 text-sm font-medium text-muted">{kpi.label}</p>
               <p className="mt-1 text-[26px] font-bold tabular-nums leading-none tracking-tight text-fg">{kpi.value}</p>
 
-              <div className="mt-2 flex items-center gap-1.5 text-xs">
+              <div className="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs">
                 <span
-                  className={`inline-flex items-center gap-0.5 font-semibold ${
+                  className={`inline-flex items-center gap-0.5 whitespace-nowrap font-semibold ${
                     positive ? 'text-success' : 'text-danger'
                   }`}
                 >
                   <TrendIcon className="h-3.5 w-3.5" />
                   {kpi.delta}
                 </span>
-                <span className="text-subtle">{kpi.compare}</span>
+                <span className="whitespace-nowrap text-subtle">{kpi.compare}</span>
               </div>
 
               <div className="mt-3 h-11">

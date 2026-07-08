@@ -53,7 +53,7 @@ function ChartTooltip({ active, payload, label }: ChartTooltipProps) {
 }
 
 const inlineStats = [
-  { label: 'Revenue', value: '$184,2K', delta: '+12.4%', positive: true },
+  { label: 'Revenue', value: '$184.2K', delta: '+12.4%', positive: true },
   { label: 'Orders', value: '2,840', delta: '-3.2%', positive: false },
   { label: 'AOV', value: '$64.86', delta: '+8.7%', positive: true }
 ];

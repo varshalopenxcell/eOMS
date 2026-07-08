@@ -36,10 +36,10 @@ export const kpis: Kpi[] = [
   {
     key: 'revenue',
     label: 'Revenue',
-    value: '$184,2K',
+    value: '$184.2K',
     delta: '12.4%',
     trend: 'up',
-    compare: 'vs Nov 1 - Nov 30',
+    compare: 'vs last month',
     icon: Receipt,
     color: CHART.brand,
     data: [22, 26, 24, 30, 28, 34, 31, 38, 35, 42, 40, 47, 44, 52]
@@ -50,7 +50,7 @@ export const kpis: Kpi[] = [
     value: '2,840',
     delta: '3.2%',
     trend: 'down',
-    compare: 'vs Nov 1 - Nov 30',
+    compare: 'vs last month',
     icon: ShoppingCart,
     color: CHART.amber,
     data: [40, 38, 42, 36, 39, 34, 37, 32, 35, 31, 33, 30, 32, 29]
@@ -61,7 +61,7 @@ export const kpis: Kpi[] = [
     value: '$64.86',
     delta: '8.7%',
     trend: 'up',
-    compare: 'vs Nov 1 - Nov 30',
+    compare: 'vs last month',
     icon: Wallet,
     color: CHART.blue,
     data: [30, 32, 31, 35, 34, 38, 40, 39, 44, 46, 45, 50, 52, 55]
@@ -72,7 +72,7 @@ export const kpis: Kpi[] = [
     value: '97.8%',
     delta: '2.7%',
     trend: 'up',
-    compare: 'vs Nov 1 - Nov 30',
+    compare: 'vs last month',
     icon: PackageCheck,
     color: CHART.green,
     data: [90, 91, 92, 91.5, 93, 94, 93.5, 95, 96, 95.5, 96.5, 97, 97.5, 97.8]
@@ -83,7 +83,7 @@ export const kpis: Kpi[] = [
     value: '1.78%',
     delta: '0.4%',
     trend: 'up',
-    compare: 'vs Nov 1 - Nov 30',
+    compare: 'vs last month',
     icon: Undo2,
     color: CHART.red,
     data: [3, 2.6, 2.8, 2.4, 2.7, 2.2, 2.5, 2.1, 2.3, 1.9, 2.1, 1.8, 2.0, 1.78]
